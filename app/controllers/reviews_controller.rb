@@ -1,6 +1,7 @@
 class ReviewsController < ApplicationController
 	before_action :find_book
 	before_action :find_review, only: [:edit, :update, :destroy]
+	before_action :authenticate_user!, only: [:new, :edit]
 
 	def new
 		@review = Review.new
@@ -12,7 +13,7 @@ class ReviewsController < ApplicationController
 		@review.user_id = current_user.id
 
 		if @review.save
-			redirect_to root_path
+			redirect_to book_path(@book)
 		else
 			render 'new'
 		end
@@ -28,6 +29,11 @@ class ReviewsController < ApplicationController
 		else
 			render 'edit'
 		end
+	end
+
+	def destroy
+		@review.destroy
+		redirect_to book_path(@book)
 	end
 
 	private
